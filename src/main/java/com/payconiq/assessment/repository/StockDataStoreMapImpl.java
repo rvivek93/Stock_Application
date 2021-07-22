@@ -51,8 +51,26 @@ public class StockDataStoreMapImpl implements StockDataStore{
 		logger.info("Data Store is loaded with available Stocks.");
 	}
 	
-	public Map<Integer, Stock> getStockDataStoreMap(){
+	public Map<Integer, Stock> getStockDataStoreMap() {
 		return this.stockDataStorage;
+	}
+
+	public Object getAllAvailableStocks() {
+		return stockDataStorage.values();
+	}
+
+	public Stock getStockById(int stockId) {
+		return stockDataStorage.get(stockId);
+	}
+
+	public Stock updateStockPrice(Stock stock) {
+		stockDataStorage.put(stock.getId(), stock);
+		return stock;
+	}
+
+	public Stock addNewStock(Stock stock) {
+		stockDataStorage.put(stock.getId(), stock);
+		return stock;
 	}
 
 }

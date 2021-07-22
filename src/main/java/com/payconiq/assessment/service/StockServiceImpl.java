@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,43 +24,39 @@ public class StockServiceImpl implements StockService {
 	@Autowired
 	private StockDataStore stockDataStore;
 
+	@SuppressWarnings("unchecked")
 	public List<Stock> getAllAvailableStocks() {
 		logger.info("Processing data from the datastore.");
-		Map<Integer, Stock> stockDetailsRepository = stockDataStore.getStockDataStoreMap();
-		List<Stock> stocksList = new ArrayList<>();
-		stocksList.addAll(stockDetailsRepository.values());
-		return stocksList;
+		List<Stock> availableStocks = new ArrayList<>();
+		availableStocks.addAll((Collection<? extends Stock>) stockDataStore.getAllAvailableStocks());
+		return availableStocks;
 	}
 
 	public Stock getStockDetails(Integer stockId) {
 		logger.info("Processing data from the datastore for Stock " + stockId + ".");
-		Map<Integer, Stock> stockDetailsRepository = stockDataStore.getStockDataStoreMap();
-		Stock stockDetails = stockDetailsRepository.get(stockId);
-		return stockDetails;
+		return stockDataStore.getStockById(stockId);
 	}
 
 	public Stock updateStockPrice(Integer stockId, BigDecimal stockPrice) {
 		logger.info("Processing data from the datastore for Stock " + stockId + ".");
-		Map<Integer, Stock> stockDetailsRepository = stockDataStore.getStockDataStoreMap();
-		Stock stockDetails = stockDetailsRepository.get(stockId);
-		if (stockDetails != null) {
-			stockDetails.setCurrentPrice(stockPrice.setScale(2, RoundingMode.CEILING));
-			stockDetails.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
-			stockDetailsRepository.put(stockId, stockDetails);
-		}
-		return stockDetails;
-	}
-
-	public Stock addNewStock(Stock stockProps) {
-		logger.info("Processing data from the datastore.");
-		Map<Integer, Stock> stockDetailsRepository = stockDataStore.getStockDataStoreMap();
-		if (stockDetailsRepository.containsKey(stockProps.getId())) {
+		Stock stock = stockDataStore.getStockById(stockId);
+		if (stock == null) {
 			return null;
 		}
-		stockProps.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
-		stockProps.setCurrentPrice(stockProps.getCurrentPrice().setScale(2, RoundingMode.CEILING));
-		stockDetailsRepository.put(stockProps.getId(), stockProps);
-		return stockDetailsRepository.get(stockProps.getId());
+		stock.setCurrentPrice(stockPrice.setScale(2, RoundingMode.CEILING));
+		stock.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
+		return stockDataStore.updateStockPrice(stock);
+	}
+
+	public Stock addNewStock(Stock stock) {
+		logger.info("Processing data from the datastore.");
+		Stock stockData = stockDataStore.getStockById(stock.getId());
+		if (stockData != null) {
+			return null;
+		}
+		stock.setCurrentPrice(stock.getCurrentPrice().setScale(2, RoundingMode.CEILING));
+		stock.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
+		return stockDataStore.addNewStock(stock);
 	}
 
 }

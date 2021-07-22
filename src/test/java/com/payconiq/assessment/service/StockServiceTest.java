@@ -50,10 +50,10 @@ public class StockServiceTest {
 	@Test
 	public void testGetAllAvailableStocks() {
 
-		Mockito.when(stockDataStore.getStockDataStoreMap()).thenReturn(stockDetailsRepository);
-
 		List<Stock> expectedAvailableStocks = new ArrayList<>();
 		expectedAvailableStocks.addAll(stockDetailsRepository.values());
+
+		Mockito.when(stockDataStore.getAllAvailableStocks()).thenReturn(expectedAvailableStocks);
 
 		List<Stock> actualAvailableStocks = stockService.getAllAvailableStocks();
 		assertEquals(expectedAvailableStocks, actualAvailableStocks);
@@ -62,7 +62,7 @@ public class StockServiceTest {
 	@Test
 	public void testGetStockDetails() {
 
-		Mockito.when(stockDataStore.getStockDataStoreMap()).thenReturn(stockDetailsRepository);
+		Mockito.when(stockDataStore.getStockById(1)).thenReturn(stockDetailsRepository.get(1));
 
 		Stock expectedStockDetails = stockDetailsRepository.get(1);
 
@@ -74,11 +74,13 @@ public class StockServiceTest {
 	@Test
 	public void testUpdateStockPrice() {
 
-		Mockito.when(stockDataStore.getStockDataStoreMap()).thenReturn(stockDetailsRepository);
+		Mockito.when(stockDataStore.getStockById(Mockito.anyInt())).thenReturn(stockDetailsRepository.get(2));
 
-		Stock expectedStockDetails = stockDetailsRepository.get(1);
+		Mockito.when(stockDataStore.updateStockPrice(Mockito.any())).thenReturn(stockDetailsRepository.get(2));
 
-		Stock actualStockDetails = stockService.updateStockPrice(1, new BigDecimal(520.50));
+		Stock expectedStockDetails = stockDetailsRepository.get(2);
+
+		Stock actualStockDetails = stockService.updateStockPrice(1, new BigDecimal(300.49));
 
 		assertEquals(expectedStockDetails, actualStockDetails);
 	}
@@ -86,10 +88,13 @@ public class StockServiceTest {
 	@Test
 	public void testAddNewStock() {
 
-		Mockito.when(stockDataStore.getStockDataStoreMap()).thenReturn(stockDetailsRepository);
+		Stock stock = new Stock(4, "Zomato", new BigDecimal(500.50), Timestamp.valueOf(LocalDateTime.now()));
 
-		Stock expectedStockDetails = new Stock(4, "Zomato", new BigDecimal(500.50),
-				Timestamp.valueOf(LocalDateTime.now()));
+		stockDetailsRepository.put(4, stock);
+
+		Mockito.when(stockDataStore.addNewStock(Mockito.any())).thenReturn(stockDetailsRepository.get(4));
+
+		Stock expectedStockDetails = stock;
 
 		Stock actualStockDetails = stockService.addNewStock(expectedStockDetails);
 
