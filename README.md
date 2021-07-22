@@ -45,17 +45,67 @@ This application is to serve API's for
 
 # API's Implemented
 
-  # GET http://localhost:8989/api/stocks
+  # GET /api/stocks
     API to get all the available stocks.
+    
+    Request Params : No Params
+    Response Code  : 200
+    Response       : [
+                       {
+                          "id": 1,
+                          "name": "Nasdaq",
+                          "currentPrice": 977.65,
+                          "lastUpdate": "2021-07-22T18:32:37.569+00:00"
+                      },
+                      {
+                          "id": 2,
+                          "name": "Tesla",
+                          "currentPrice": 300.45,
+                          "lastUpdate": "2021-07-22T18:32:37.570+00:00"
+                      }
+                    ]
   
-  # GET http://localhost:8989/api/stocks/{stockId}
+  # GET /api/stocks/{stockId}
     API to get a single stock details.
     
-  # PUT http://localhost:8989/api/stocks/{stockId}/{stockPrice}
+    Request Param : Id : 1
+    Response Code : 200
+    Response      : {
+                      "id": 1,
+                      "name": "Nasdaq",
+                      "currentPrice": 977.65,
+                      "lastUpdate": "2021-07-22T18:32:37.569+00:00"
+                   }
+    
+  # PUT /api/stocks/{stockId}/{stockPrice}
     API to update the price of a single stock.
     
-  # POST http://localhost:8989/api/stocks
+    Request Param : Id : 1 , Price : 200.00
+    Response Code : 200
+    Response      : {
+                        "id": 1,
+                        "name": "Nasdaq",
+                        "currentPrice": 200.00,
+                        "lastUpdate": "2021-07-22T18:44:35.621+00:00"
+                    }
+    
+  # POST /api/stocks
     API to create or add a new stock
+    
+      Request Body : {
+                        "id": 2,
+                        "name": "Dettol",
+                        "currentPrice": 292.67,
+                        "lastUpdate": "2021-07-19T16:47:13.780+00:00"
+                    }
+    Response Code : 201
+    Response      : {
+                        "id": 2,
+                        "name": "Dettol",
+                        "currentPrice": 292.67,
+                        "lastUpdate": "2021-07-19T16:47:13.780+00:00"
+                    }
+    
     
  # Implementation
    
